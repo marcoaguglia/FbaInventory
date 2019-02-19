@@ -16,6 +16,7 @@
 package amazon.product;
 
 
+import buisness.PriceManager;
 import com.amazonservices.mws.products.MarketplaceWebServiceProducts;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsClient;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsException;
@@ -55,7 +56,9 @@ public class GetLowestPricedOffersForSKUSample {
             String responseXml = response.toXML();
             System.out.println(responseXml);*/
 
-
+            if (response.getResponseHeaderMetadata().getQuotaRemaining() < 1) {
+                PriceManager.setQuota_over(false);
+            } else PriceManager.setQuota_over(true);
             return response.getGetLowestPricedOffersForSKUResult();
 
 
@@ -71,8 +74,9 @@ public class GetLowestPricedOffersForSKUSample {
             System.out.println("StatusCode: " + ex.getStatusCode());
             System.out.println("ErrorCode: " + ex.getErrorCode());
             System.out.println("ErrorType: " + ex.getErrorType());
-            throw ex;
+            //  throw ex;
         }
+        return null;
     }
 
     /**

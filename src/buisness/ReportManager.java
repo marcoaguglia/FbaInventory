@@ -6,19 +6,22 @@ import amazon.Report.GetReportSample;
 import amazon.Report.RequestReportSample;
 import com.amazonaws.mws.model.*;
 import model.Inventory;
+import model.Product;
 import utility.Sleep;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 
 /*******************************************
  * ReportManagerClass
- * Load setInventory function.
+ * Load setTempInventory function.
  * Load FBA multi country inventory.
  ******************************************/
 
 public class ReportManager {
+    private final static String os = System.getProperty("os.name");
 
     /*******************************************
      * SetInventory method
@@ -26,7 +29,7 @@ public class ReportManager {
      * -sku, asin, country, quantity and date.
      ******************************************/
 
-    public static void setInventory() {
+    public static void setTempInventory() {
         GetReportListResponse response;
         GetReportListByNextTokenResponse responseToken;
         String nextToken = null;
@@ -73,24 +76,72 @@ public class ReportManager {
                     //Upload on Database lista.txt temp file.
                     Inventory.loadInventoryTemp();
 
-                    //TODO change directoy
-
                     //Delete file lista.txt
-                    //File file = new File("/home/gate/software_g14/fba_report_list.txt");
-                    File file = new File("C:\\Users\\Marco Aguglia\\Desktop\\lista.txt");
+                    File file = new File("/home/gate/software_g14/fba_report_list.txt");
+                    //  File file = new File("C:\\Users\\Marco Aguglia\\Desktop\\lista.txt");
                     if (file.delete()) {
                         //Check file deleting and print that is ok.
-                        System.out.println("caricamento in Database temporaneo terminato.\nFile cancellato dalla memoria." +
-                                "\n\n\n Avvio confronto dati tabella principale");
+                        System.out.println("caricamento FBA_temp terminato.\nFile cancellato dalla memoria.");
                     }
                 }
             }
-
             //close while loop for every nextToken
         } while (nextToken != null);
+        setInventory();
+    }
 
+    public static void setInventory() {
+        int fba_Temp_Size = Inventory.findSizeInventoryTemp();
+
+        //InsertProduct,PriceError counter
+        int product_inserted = 0;
+
+        //Scan every item of Fba_temp
+        for (int i = 0; i < fba_Temp_Size; i++) {
+            //Print Status of process
+            /***************************************************************************/
+            System.out.println("Caricamento: " + (i * 100) / fba_Temp_Size + "%" +
+                    "\tElemento: " + i + " : " + fba_Temp_Size +
+                    "\t" + product_inserted + " Aggiunti");
+            /*******************************************************************/
+            //Get i-item from FBA_temp
+            Product productTemp = Product.findTempProduct(i);
+            //Search and get if available a clone productTemp
+            Product productStatus = Product.findInventoryProduct(productTemp.getSku(), productTemp.getCountry(), productTemp.getGiacenza());
+
+            // if clone exist in product status, jump insert
+            if (productStatus == null || !(productStatus.getGiacenza().equals(productTemp.getGiacenza()))) {
+
+                //Insert in FBA_status
+                Product.insertSkus(productTemp.getSku(), productTemp.getAsin());
+                Product.insertProductInventory(productTemp);
+
+                //incremet counter
+                product_inserted++;
+            }
+
+            //Clean console
+            /**********************************************************************************/
+            if (os.contains("Windows")) {
+                try {
+                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                } catch (InterruptedException | IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    Runtime.getRuntime().exec("clear");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            /**********************************************************************************/
+        }
+        //Truncate FBA_temp
+        Inventory.truncateTempTable();
 
     }
+
 }
 
 

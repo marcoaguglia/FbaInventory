@@ -53,15 +53,15 @@ public class GetMatchingProductForIdSample {
             GetMatchingProductForIdResponse response = client.getMatchingProductForId(request);
             ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
             // We recommend logging every the request id and timestamp of every call.
-            System.out.println("Response:");
+          /*  System.out.println("Response:");
             System.out.println("RequestId: " + rhmd.getRequestId());
             System.out.println("Timestamp: " + rhmd.getTimestamp());
             String responseXml = response.toXML();
-            System.out.println(responseXml);
+            System.out.println(responseXml);*/
             return response;
         } catch (MarketplaceWebServiceProductsException ex) {
             // Exception properties are important for diagnostics.
-            System.out.println("Service Exception:");
+        /*    System.out.println("Service Exception:");
             ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
             if (rhmd != null) {
                 System.out.println("RequestId: " + rhmd.getRequestId());
@@ -70,7 +70,7 @@ public class GetMatchingProductForIdSample {
             System.out.println("Message: " + ex.getMessage());
             System.out.println("StatusCode: " + ex.getStatusCode());
             System.out.println("ErrorCode: " + ex.getErrorCode());
-            System.out.println("ErrorType: " + ex.getErrorType());
+            System.out.println("ErrorType: " + ex.getErrorType());*/
             throw ex;
         }
     }
@@ -94,12 +94,12 @@ public class GetMatchingProductForIdSample {
         request.setMWSAuthToken(mwsAuthToken);
         String marketplaceId = MarketId.valueOf(productTemp.getCountry()).getText();
         request.setMarketplaceId(marketplaceId);
-        String idType = "SellerSKU";
+        String idType = "ASIN";
         request.setIdType(idType);
         IdListType idList = new IdListType();
-        List<String> skus = new ArrayList<>();
-        skus.add(productTemp.getSku());
-        idList.setId(skus);
+        List<String> asin = new ArrayList<>();
+        asin.add(productTemp.getAsin());
+        idList.setId(asin);
         request.setIdList(idList);
 
         // Make the call.
@@ -108,19 +108,20 @@ public class GetMatchingProductForIdSample {
 
             Document doc = XmlParser.xmlFromString(response.getGetMatchingProductForIdResult().get(0).toXML());
             doc.normalize();
-            Element getMatchingProductForIdResponse = (Element) doc.getDocumentElement();
+            Element getMatchingProductForIdResponse = doc.getDocumentElement();
             Element products = (Element) getMatchingProductForIdResponse.getElementsByTagName("Products").item(0);
-            Element product = (Element) products.getElementsByTagName("Product").item(0);
-            Element getAttributeSets = (Element) product.getElementsByTagName("AttributeSets").item(0);
-            Element itemAttributes = (Element) getAttributeSets.getElementsByTagName("ns2:ItemAttributes").item(0);
-            Element smallImage = (Element) itemAttributes.getElementsByTagName("ns2:SmallImage").item(0);
-            String img_url = smallImage.getElementsByTagName("ns2:URL").item(0).getTextContent();
-            img_url = img_url.replace("._SL75_", "");
-            productTemp.setImg_url(img_url);
-
+            if (products != null && products.getElementsByTagName("Product") != null && products.getElementsByTagName("Product").item(0) != null) {
+                Element product = (Element) products.getElementsByTagName("Product").item(0);
+                Element getAttributeSets = (Element) product.getElementsByTagName("AttributeSets").item(0);
+                Element itemAttributes = (Element) getAttributeSets.getElementsByTagName("ns2:ItemAttributes").item(0);
+                Element smallImage = (Element) itemAttributes.getElementsByTagName("ns2:SmallImage").item(0);
+                String img_url = smallImage.getElementsByTagName("ns2:URL").item(0).getTextContent();
+                img_url = img_url.replace("._SL75_", "");
+                productTemp.setImg_url(img_url);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }
+

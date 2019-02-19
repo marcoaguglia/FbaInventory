@@ -117,8 +117,8 @@ public class GetReportSample {
         request.setReportId(reportId);
         OutputStream report;
         try {
-            //  report = new FileOutputStream("/home/gate/software_g14/fba_report_list.txt");
-            report = new FileOutputStream("C:\\Users\\Marco\\Desktop\\lista.txt");
+            report = new FileOutputStream("/home/gate/software_g14/fba_report_list.txt");
+            // report = new FileOutputStream("C:\\Users\\Marco\\Desktop\\lista.txt");
             request.setReportOutputStream(report);
             invokeGetReport(service, request);
             report.close();

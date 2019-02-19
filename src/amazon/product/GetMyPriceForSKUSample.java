@@ -62,7 +62,7 @@ public class GetMyPriceForSKUSample {
 
         } catch (MarketplaceWebServiceProductsException ex) {
             // Exception properties are important for diagnostics.
-            System.out.println("Service Exception:");
+          /*  System.out.println("Service Exception:");
             ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
             if (rhmd != null) {
                 System.out.println("RequestId: " + rhmd.getRequestId());
@@ -71,7 +71,7 @@ public class GetMyPriceForSKUSample {
             System.out.println("Message: " + ex.getMessage());
             System.out.println("StatusCode: " + ex.getStatusCode());
             System.out.println("ErrorCode: " + ex.getErrorCode());
-            System.out.println("ErrorType: " + ex.getErrorType());
+            System.out.println("ErrorType: " + ex.getErrorType());*/
             throw ex;
         }
     }

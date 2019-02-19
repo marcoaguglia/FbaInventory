@@ -11,17 +11,36 @@ public class Product {
     private String condition;
     private BigDecimal price;
     private BigDecimal lowest_price;
-    private String country;
-    private String asin;
-    private String giacenza;
-    private BigDecimal buyBox_Price;
-    private Is_winner buybox_winner;
-    private boolean is_prime;
+    private BigDecimal total_Fee;
+    private BigDecimal fba_Fee;
+    //  private boolean is_prime;
     private String img_url;
 
     public static void update_Is_Winner_Status(Product product) {
         Product_DAO.getInstance()._Is_Winner_Status(product);
     }
+
+    public static void insertSkus(String sku, String asin) {
+        Product_DAO.getInstance().insertSku(sku, asin);
+    }
+
+    public static void insertProductInventory(Product p) {
+        Product_DAO.getInstance().insertProductInventory(p);
+    }
+
+    private String country;
+    private String asin;
+    private String giacenza;
+    private BigDecimal buyBox_Price;
+    private Is_winner buybox_winner;
+
+    public static void insertPrice(Product p) {
+        Product_DAO.getInstance().insertPrice(p);
+    }
+
+
+    // private String posizione;
+
 
     public String getImg_url() {
         return img_url;
@@ -29,24 +48,6 @@ public class Product {
 
     public void setImg_url(String img_url) {
         this.img_url = img_url;
-    }
-    private String date;
-    private String posizione;
-
-    public static Product findTempProduct(int i) {
-        return Product_DAO.getInstance().findTempProduct(i);
-    }
-
-    public static Product findStatusProduct(String sku, String country, String giacenza) {
-        return Product_DAO.getInstance().findStatusProduct(sku, country, giacenza);
-    }
-
-    public static void updateBuyBoxPrice(String asin, BigDecimal buybox_price, String marketplace) {
-        Product_DAO.getInstance().updateBuyBoxPrice(asin, buybox_price, marketplace);
-    }
-
-    public static void insertProduct(Product p) {
-        Product_DAO.getInstance().insertProduct(p);
     }
 
     public BigDecimal getBuyBox_Price() {
@@ -97,13 +98,13 @@ public class Product {
         this.fullfillmentChannelSku = fullfillmentChannelSku;
     }
 
-    public String getCondition() {
+    /*public String getCondition() {
         return condition;
     }
 
     public void setCondition(String condition) {
         this.condition = condition;
-    }
+    }*/
 
     public String getCountry() {
         return country;
@@ -128,4 +129,49 @@ public class Product {
     public void setGiacenza(String giacenza) {
         this.giacenza = giacenza;
     }
+
+    public static void insertAttribute(Product p) {
+        Product_DAO.getInstance().insertAttribute(p);
+    }
+
+    public static Product findInventoryProduct(String sku, String country, String giacenza) {
+        return Product_DAO.getInstance().findInventoryProduct(sku, country, giacenza);
+    }
+
+    public static Product findTempProduct(int i) {
+        return Product_DAO.getInstance().findTempProduct(i);
+    }
+
+    public static void updateBuyBoxPrice(String asin, BigDecimal buybox_price, String marketplace) {
+        Product_DAO.getInstance().updateBuyBoxPrice(asin, buybox_price, marketplace);
+    }
+
+    public static Product findSku_forPricing(int i) {
+        return Product_DAO.getInstance().findSku_forPricing(i);
+    }
+
+    public static Product findPrice(String sku, String country) {
+        return Product_DAO.getInstance().findPrice(sku, country);
+    }
+
+    public static Product findSku(int i) {
+        return Product_DAO.getInstance().findSku(i);
+    }
+
+    public BigDecimal getTotal_Fee() {
+        return total_Fee;
+    }
+
+    public void setTotal_Fee(BigDecimal total_Fee) {
+        this.total_Fee = total_Fee;
+    }
+
+    public BigDecimal getFba_Fee() {
+        return fba_Fee;
+    }
+
+    public void setFba_Fee(BigDecimal fba_Fee) {
+        this.fba_Fee = fba_Fee;
+    }
+
 }

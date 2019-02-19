@@ -16,5 +16,9 @@ public class Inventory {
     public static void truncateTempTable() {
         Inventory_DAO.getInstance().truncateFba_Temp();
     }
+
+    public static int findSizeSkus() {
+        return Inventory_DAO.getInstance().findSizeSkus();
+    }
 }
 

@@ -10,8 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="MwsLib" level="application" />
     <orderEntry type="library" name="mysql-connector-java-8.0.15" level="application" />
-    <orderEntry type="library" name="com.amazonaws:aws-java-sdk-sqs:1.11.493" level="application" />
+    <orderEntry type="library" name="MwsLib" level="application" />
   </component>
 </module>

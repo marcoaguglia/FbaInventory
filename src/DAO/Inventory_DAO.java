@@ -15,8 +15,8 @@ public class Inventory_DAO {
     }
 
     public void loadInventoryTemp() {
-        //Db_connection.getInstance().eseguiAggiornamento(" LOAD DATA LOCAL INFILE '/home/gate/software_g14/fba_report_list.txt'\n" +
-        Db_connection.getInstance().eseguiAggiornamento(" LOAD DATA LOCAL INFILE 'C:/Users/Marco/Desktop/lista.txt'\n" +
+        Db_connection.getInstance().eseguiAggiornamento(" LOAD DATA LOCAL INFILE '/home/gate/software_g14/fba_report_list.txt'\n" +
+                //  Db_connection.getInstance().eseguiAggiornamento(" LOAD DATA LOCAL INFILE 'C:/Users/Marco/Desktop/lista.txt'\n" +
                 "        INTO TABLE FBA_temp\n" +
                 "        FIELDS TERMINATED by '\\t'\n" +
                 "        LINES TERMINATED BY '\\n'\n" +
@@ -32,7 +32,7 @@ public class Inventory_DAO {
     }
 
     public int findSizeInventoryStatus() {
-        ArrayList<String[]> result = Db_connection.getInstance().eseguiQuery("SELECT count(*) FROM FBA_status");
+        ArrayList<String[]> result = Db_connection.getInstance().eseguiQuery("SELECT count(*) FROM FBA_inventory");
         String[] x = result.get(0);
         return Integer.parseInt(x[0]);
     }
@@ -41,4 +41,9 @@ public class Inventory_DAO {
         Db_connection.getInstance().eseguiAggiornamento("truncate table FBA_temp");
     }
 
+    public int findSizeSkus() {
+        ArrayList<String[]> result = Db_connection.getInstance().eseguiQuery("SELECT count(*) FROM Skus");
+        String[] x = result.get(0);
+        return Integer.parseInt(x[0]);
+    }
 }
