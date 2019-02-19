@@ -15,24 +15,25 @@
  */
 package amazon.product;
 
-
 import com.amazonservices.mws.products.MarketplaceWebServiceProducts;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsClient;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsException;
-import com.amazonservices.mws.products.model.GetCompetitivePricingForSKURequest;
-import com.amazonservices.mws.products.model.GetCompetitivePricingForSKUResponse;
+import com.amazonservices.mws.products.model.ASINListType;
+import com.amazonservices.mws.products.model.GetLowestOfferListingsForASINRequest;
+import com.amazonservices.mws.products.model.GetLowestOfferListingsForASINResponse;
 import com.amazonservices.mws.products.model.ResponseHeaderMetadata;
-import com.amazonservices.mws.products.model.SellerSKUListType;
+import com.amazonservices.mws.products.samples.MarketplaceWebServiceProductsSampleConfig;
 import model.Product;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Sample call for GetCompetitivePricingForSKU.
+ * Sample call for GetLowestOfferListingsForASIN.
  */
-public class GetCompetitivePricingForSKUSample {
+public class GetLowestOfferListingsForASINSample {
 
     /**
      * Call the service, log response and exceptions.
@@ -41,17 +42,17 @@ public class GetCompetitivePricingForSKUSample {
      * @param request
      * @return The response.
      */
-    public static GetCompetitivePricingForSKUResponse invokeGetCompetitivePricingForSKU(
+    public static GetLowestOfferListingsForASINResponse invokeGetLowestOfferListingsForASIN(
             MarketplaceWebServiceProducts client,
-            GetCompetitivePricingForSKURequest request) {
+            GetLowestOfferListingsForASINRequest request) {
         try {
             // Call the service.
-            GetCompetitivePricingForSKUResponse response = client.getCompetitivePricingForSKU(request);
+            GetLowestOfferListingsForASINResponse response = client.getLowestOfferListingsForASIN(request);
             ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
             // We recommend logging every the request id and timestamp of every call.
-           /* System.out.println("Response:");
-            System.out.println("RequestId: " + rhmd.getRequestId());
-            System.out.println("Timestamp: " + rhmd.getTimestamp());
+          /*  System.out.println("Response:");
+            System.out.println("RequestId: "+rhmd.getRequestId());
+            System.out.println("Timestamp: "+rhmd.getTimestamp());
             String responseXml = response.toXML();
             System.out.println(responseXml);*/
             return response;
@@ -73,17 +74,15 @@ public class GetCompetitivePricingForSKUSample {
 
     /**
      * Command line entry point.
-     *
-     * @param p
      */
-    public static BigDecimal getCompetitivePricing(Product p) {
+    public static BigDecimal getLowestOfferListing(Product p) {
 
         // Get a client connection.
         // Make sure you've set the variables in MarketplaceWebServiceProductsSampleConfig.
         MarketplaceWebServiceProductsClient client = MarketplaceWebServiceProductsSampleConfig.getClient();
 
         // Create a request.
-        GetCompetitivePricingForSKURequest request = new GetCompetitivePricingForSKURequest();
+        GetLowestOfferListingsForASINRequest request = new GetLowestOfferListingsForASINRequest();
         String sellerId = "A1DKMVBC49AN5B";
         request.setSellerId(sellerId);
         String mwsAuthToken = "amzn.mws.1cac3970-d8c0-09a5-28d9-378147e30a61";
@@ -109,26 +108,30 @@ public class GetCompetitivePricingForSKUSample {
                 marketplaceId = "A13V1IB3VIYZZH";
                 break;
         }
+
         request.setMarketplaceId(marketplaceId);
 
-
-        List<String> skus = new ArrayList<>();
-        skus.add(p.getSku());
-        SellerSKUListType sellerSKUList = new SellerSKUListType();
-        sellerSKUList.setSellerSKU(skus);
-        request.setSellerSKUList(sellerSKUList);
+        List<String> asins = new ArrayList<>();
+        asins.add(p.getSku());
+        ASINListType asinList = new ASINListType();
+        asinList.setASIN(asins);
+        request.setASINList(asinList);
+        String itemCondition = "New";
+        request.setItemCondition(itemCondition);
+        Boolean excludeMe = Boolean.valueOf(true);
+        request.setExcludeMe(excludeMe);
 
         // Make the call.
-        GetCompetitivePricingForSKUResponse response = GetCompetitivePricingForSKUSample.invokeGetCompetitivePricingForSKU(client, request);
+        GetLowestOfferListingsForASINResponse response = GetLowestOfferListingsForASINSample.invokeGetLowestOfferListingsForASIN(client, request);
+
         try {
-            if (response.getGetCompetitivePricingForSKUResult().size() != 0)
-                if (response.getGetCompetitivePricingForSKUResult().get(0).getProduct().getCompetitivePricing().getCompetitivePrices().getCompetitivePrice().size() != 0)
-                    if (response.getGetCompetitivePricingForSKUResult().get(0).getProduct().getCompetitivePricing().getCompetitivePrices().getCompetitivePrice().get(0).getPrice().getLandedPrice().getAmount() != null)
-                        return response.getGetCompetitivePricingForSKUResult().get(0).getProduct().getCompetitivePricing().getCompetitivePrices().getCompetitivePrice().get(0).getPrice().getLandedPrice().getAmount();
+            if (response.getGetLowestOfferListingsForASINResult().size() != 0)
+                if (response.getGetLowestOfferListingsForASINResult().get(0).getProduct().getLowestOfferListings().getLowestOfferListing().size() != 0)
+                    if (response.getGetLowestOfferListingsForASINResult().get(0).getProduct().getLowestOfferListings().getLowestOfferListing().get(0).getPrice().getLandedPrice().getAmount() != null)
+                        return response.getGetLowestOfferListingsForASINResult().get(0).getProduct().getLowestOfferListings().getLowestOfferListing().get(0).getPrice().getLandedPrice().getAmount();
         } catch (NullPointerException ignore) {
         }
         return BigDecimal.valueOf((0.00));
-
 
     }
 

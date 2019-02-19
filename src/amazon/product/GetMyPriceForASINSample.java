@@ -18,11 +18,10 @@ package amazon.product;
 import com.amazonservices.mws.products.MarketplaceWebServiceProducts;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsClient;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsException;
-import com.amazonservices.mws.products.model.GetLowestOfferListingsForSKURequest;
-import com.amazonservices.mws.products.model.GetLowestOfferListingsForSKUResponse;
+import com.amazonservices.mws.products.model.ASINListType;
+import com.amazonservices.mws.products.model.GetMyPriceForASINRequest;
+import com.amazonservices.mws.products.model.GetMyPriceForASINResponse;
 import com.amazonservices.mws.products.model.ResponseHeaderMetadata;
-import com.amazonservices.mws.products.model.SellerSKUListType;
-import model.Product;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,9 +29,9 @@ import java.util.List;
 
 
 /**
- * Sample call for GetLowestOfferListingsForSKU.
+ * Sample call for GetMyPriceForASIN.
  */
-public class GetLowestOfferListingsForSKUSample {
+public class GetMyPriceForASINSample {
 
     /**
      * Call the service, log response and exceptions.
@@ -41,20 +40,27 @@ public class GetLowestOfferListingsForSKUSample {
      * @param request
      * @return The response.
      */
-    public static GetLowestOfferListingsForSKUResponse invokeGetLowestOfferListingsForSKU(
+    public static BigDecimal invokeGetMyPriceForASIN(
             MarketplaceWebServiceProducts client,
-            GetLowestOfferListingsForSKURequest request) {
+            GetMyPriceForASINRequest request) {
         try {
             // Call the service.
-            GetLowestOfferListingsForSKUResponse response = client.getLowestOfferListingsForSKU(request);
+            GetMyPriceForASINResponse response = client.getMyPriceForASIN(request);
             ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
             // We recommend logging every the request id and timestamp of every call.
-         /*   System.out.println("Response:");
-            System.out.println("RequestId: " + rhmd.getRequestId());
-            System.out.println("Timestamp: " + rhmd.getTimestamp());
+          /*  System.out.println("Response:");
+            System.out.println("RequestId: "+rhmd.getRequestId());
+            System.out.println("Timestamp: "+rhmd.getTimestamp());
             String responseXml = response.toXML();
             System.out.println(responseXml);*/
-            return response;
+            try {
+                if (response.getGetMyPriceForASINResult().size() != 0 && response.getGetMyPriceForASINResult().get(0).getProduct().getOffers().getOffer().size() != 0)
+                    return response.getGetMyPriceForASINResult().get(0).getProduct().getOffers().getOffer().get(0).getBuyingPrice().getLandedPrice().getAmount();
+            } catch (NullPointerException e) {
+                System.out.println(e.getCause() + "\n\n" + e.getMessage());
+
+            }
+            return null;
         } catch (MarketplaceWebServiceProductsException ex) {
             // Exception properties are important for diagnostics.
             System.out.println("Service Exception:");
@@ -69,28 +75,27 @@ public class GetLowestOfferListingsForSKUSample {
             System.out.println("ErrorType: " + ex.getErrorType());
             throw ex;
         }
+
     }
 
     /**
      * Command line entry point.
      */
-    public static BigDecimal getLowestOfferListing(Product p) {
+    public static BigDecimal getMyPriceForASINSample(String asin, String marketplace) {
 
         // Get a client connection.
         // Make sure you've set the variables in MarketplaceWebServiceProductsSampleConfig.
         MarketplaceWebServiceProductsClient client = MarketplaceWebServiceProductsSampleConfig.getClient();
 
         // Create a request.
-        GetLowestOfferListingsForSKURequest request = new GetLowestOfferListingsForSKURequest();
+        GetMyPriceForASINRequest request = new GetMyPriceForASINRequest();
         String sellerId = "A1DKMVBC49AN5B";
         request.setSellerId(sellerId);
         String mwsAuthToken = "amzn.mws.1cac3970-d8c0-09a5-28d9-378147e30a61";
         request.setMWSAuthToken(mwsAuthToken);
-
-
         String marketplaceId = "";
 
-        switch (p.getCountry()) {
+        switch (marketplace) {
             case "IT":
                 marketplaceId = "APJ6JRA9NG5V4";
                 break;
@@ -109,27 +114,16 @@ public class GetLowestOfferListingsForSKUSample {
         }
         request.setMarketplaceId(marketplaceId);
 
-        List<String> skus = new ArrayList<>();
-        skus.add(p.getSku());
-        SellerSKUListType sellerSKUList = new SellerSKUListType();
-        sellerSKUList.setSellerSKU(skus);
-        request.setSellerSKUList(sellerSKUList);
-        String itemCondition = "New";
-        request.setItemCondition(itemCondition);
-        Boolean excludeMe = Boolean.valueOf(true);
-        request.setExcludeMe(excludeMe);
+        List<String> asinList = new ArrayList<>();
+        asinList.add(asin);
+        ASINListType sellerASINList = new ASINListType();
+        sellerASINList.setASIN(asinList);
+
+        request.setASINList(sellerASINList);
+
 
         // Make the call.
-
-        GetLowestOfferListingsForSKUResponse response = GetLowestOfferListingsForSKUSample.invokeGetLowestOfferListingsForSKU(client, request);
-        try {
-            if (response.getGetLowestOfferListingsForSKUResult().size() != 0)
-                if (response.getGetLowestOfferListingsForSKUResult().get(0).getProduct().getLowestOfferListings().getLowestOfferListing().size() != 0)
-                    if (response.getGetLowestOfferListingsForSKUResult().get(0).getProduct().getLowestOfferListings().getLowestOfferListing().get(0).getPrice().getLandedPrice().getAmount() != null)
-                        return response.getGetLowestOfferListingsForSKUResult().get(0).getProduct().getLowestOfferListings().getLowestOfferListing().get(0).getPrice().getLandedPrice().getAmount();
-        } catch (NullPointerException ignore) {
-        }
-        return BigDecimal.valueOf((0.00));
+        return GetMyPriceForASINSample.invokeGetMyPriceForASIN(client, request);
 
     }
 

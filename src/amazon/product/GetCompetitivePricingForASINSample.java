@@ -15,14 +15,15 @@
  */
 package amazon.product;
 
-
 import com.amazonservices.mws.products.MarketplaceWebServiceProducts;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsClient;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsException;
-import com.amazonservices.mws.products.model.GetMyPriceForSKURequest;
-import com.amazonservices.mws.products.model.GetMyPriceForSKUResponse;
+import com.amazonservices.mws.products.model.ASINListType;
+import com.amazonservices.mws.products.model.GetCompetitivePricingForASINRequest;
+import com.amazonservices.mws.products.model.GetCompetitivePricingForASINResponse;
 import com.amazonservices.mws.products.model.ResponseHeaderMetadata;
-import com.amazonservices.mws.products.model.SellerSKUListType;
+import com.amazonservices.mws.products.samples.MarketplaceWebServiceProductsSampleConfig;
+import model.Product;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,9 +31,9 @@ import java.util.List;
 
 
 /**
- * Sample call for GetMyPriceForSKU.
+ * Sample call for GetCompetitivePricingForASIN.
  */
-public class GetMyPriceForSKUSample {
+public class GetCompetitivePricingForASINSample {
 
     /**
      * Call the service, log response and exceptions.
@@ -41,28 +42,23 @@ public class GetMyPriceForSKUSample {
      * @param request
      * @return The response.
      */
-    public static BigDecimal invokeGetMyPriceForSKU(
+    public static GetCompetitivePricingForASINResponse invokeGetCompetitivePricingForASIN(
             MarketplaceWebServiceProducts client,
-            GetMyPriceForSKURequest request) {
+            GetCompetitivePricingForASINRequest request) {
         try {
             // Call the service.
-            GetMyPriceForSKUResponse response = client.getMyPriceForSKU(request);
+            GetCompetitivePricingForASINResponse response = client.getCompetitivePricingForASIN(request);
             ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
             // We recommend logging every the request id and timestamp of every call.
-
-            try {
-                if (response.getGetMyPriceForSKUResult().size() != 0 && response.getGetMyPriceForSKUResult().get(0).getProduct().getOffers().getOffer().size() != 0)
-                    return response.getGetMyPriceForSKUResult().get(0).getProduct().getOffers().getOffer().get(0).getBuyingPrice().getLandedPrice().getAmount();
-            } catch (NullPointerException e) {
-                System.out.println(e.getCause() + "\n\n" + e.getMessage());
-
-            }
-
-            return null;
-
+           /* System.out.println("Response:");
+            System.out.println("RequestId: "+rhmd.getRequestId());
+            System.out.println("Timestamp: "+rhmd.getTimestamp());
+            String responseXml = response.toXML();
+            System.out.println(responseXml);*/
+            return response;
         } catch (MarketplaceWebServiceProductsException ex) {
             // Exception properties are important for diagnostics.
-          /*  System.out.println("Service Exception:");
+            System.out.println("Service Exception:");
             ResponseHeaderMetadata rhmd = ex.getResponseHeaderMetadata();
             if (rhmd != null) {
                 System.out.println("RequestId: " + rhmd.getRequestId());
@@ -71,7 +67,7 @@ public class GetMyPriceForSKUSample {
             System.out.println("Message: " + ex.getMessage());
             System.out.println("StatusCode: " + ex.getStatusCode());
             System.out.println("ErrorCode: " + ex.getErrorCode());
-            System.out.println("ErrorType: " + ex.getErrorType());*/
+            System.out.println("ErrorType: " + ex.getErrorType());
             throw ex;
         }
     }
@@ -79,21 +75,23 @@ public class GetMyPriceForSKUSample {
     /**
      * Command line entry point.
      */
-    public static BigDecimal getMyPriceForSKUSample(String sku, String marketplace) {
+    public static BigDecimal getCompetitivePricing(Product p) {
 
         // Get a client connection.
         // Make sure you've set the variables in MarketplaceWebServiceProductsSampleConfig.
         MarketplaceWebServiceProductsClient client = MarketplaceWebServiceProductsSampleConfig.getClient();
 
         // Create a request.
-        GetMyPriceForSKURequest request = new GetMyPriceForSKURequest();
+        GetCompetitivePricingForASINRequest request = new GetCompetitivePricingForASINRequest();
         String sellerId = "A1DKMVBC49AN5B";
         request.setSellerId(sellerId);
         String mwsAuthToken = "amzn.mws.1cac3970-d8c0-09a5-28d9-378147e30a61";
         request.setMWSAuthToken(mwsAuthToken);
+
+
         String marketplaceId = "";
 
-        switch (marketplace) {
+        switch (p.getCountry()) {
             case "IT":
                 marketplaceId = "APJ6JRA9NG5V4";
                 break;
@@ -111,15 +109,22 @@ public class GetMyPriceForSKUSample {
                 break;
         }
         request.setMarketplaceId(marketplaceId);
-        List<String> skuList = new ArrayList<>();
-        skuList.add(sku);
-        SellerSKUListType sellerSKUList = new SellerSKUListType();
-        sellerSKUList.setSellerSKU(skuList);
-        request.setSellerSKUList(sellerSKUList);
+        List<String> asins = new ArrayList<>();
+        asins.add(p.getAsin());
+        ASINListType asinList = new ASINListType();
+        asinList.setASIN(asins);
+        request.setASINList(asinList);
 
         // Make the call.
-        return GetMyPriceForSKUSample.invokeGetMyPriceForSKU(client, request);
-
+        GetCompetitivePricingForASINResponse response = GetCompetitivePricingForASINSample.invokeGetCompetitivePricingForASIN(client, request);
+        try {
+            if (response.getGetCompetitivePricingForASINResult().size() != 0)
+                if (response.getGetCompetitivePricingForASINResult().get(0).getProduct().getCompetitivePricing().getCompetitivePrices().getCompetitivePrice().size() != 0)
+                    if (response.getGetCompetitivePricingForASINResult().get(0).getProduct().getCompetitivePricing().getCompetitivePrices().getCompetitivePrice().get(0).getPrice().getLandedPrice().getAmount() != null)
+                        return response.getGetCompetitivePricingForASINResult().get(0).getProduct().getCompetitivePricing().getCompetitivePrices().getCompetitivePrice().get(0).getPrice().getLandedPrice().getAmount();
+        } catch (NullPointerException ignore) {
+        }
+        return BigDecimal.valueOf((0.00));
     }
 
 }

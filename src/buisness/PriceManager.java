@@ -60,9 +60,9 @@ public class PriceManager {
 
                 product.setCountry(country);
 
-                BigDecimal price = GetMyPriceForSKUSample.getMyPriceForSKUSample(product.getSku(), country);
-                BigDecimal buybox_price = GetCompetitivePricingForSKUSample.getCompetitivePricing(product);
-                BigDecimal lowest_price = GetLowestOfferListingsForSKUSample.getLowestOfferListing(product);
+                BigDecimal price = GetMyPriceForASINSample.getMyPriceForASINSample(product.getAsin(), country);
+                BigDecimal buybox_price = GetCompetitivePricingForASINSample.getCompetitivePricing(product);
+                BigDecimal lowest_price = GetLowestOfferListingsForASINSample.getLowestOfferListing(product);
 
                 //if don't found my price set at 0.00 else set price
                 if (price == null) {

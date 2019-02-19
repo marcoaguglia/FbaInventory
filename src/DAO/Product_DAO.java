@@ -45,11 +45,13 @@ public class Product_DAO {
 
     public void insertPrice(Product p) {
         Db_connection.getInstance().eseguiAggiornamento("INSERT INTO `Prezzi`(`sku`,`country`,`price`,`buybox`,`lowest`,`priority`,`total_fee`,`fba_fee`) " +
-                "VALUES ('" + p.getSku() + "','" + p.getCountry() + "','" + p.getPrice() + "','" + p.getBuyBox_Price() + "','" + p.getLowest_price() + "',NOW()) " +
+                "VALUES ('" + p.getSku() + "','" + p.getCountry() + "','" + p.getPrice() + "','" + p.getBuyBox_Price() + "','" + p.getLowest_price() + "',NOW(),'" + p.getTotal_Fee() + "','" + p.getFba_Fee() + "') " +
                 "ON DUPLICATE KEY UPDATE " +
                 "priority=NOW()" +
                 ",price='" + p.getPrice() + "'" +
                 ",buybox='" + p.getBuyBox_Price() + "'" +
+                ",total_fee='" + p.getTotal_Fee() + "'" +
+                ",fba_fee='" + p.getFba_Fee() + "'" +
                 ",lowest='" + p.getLowest_price() + "'");
 
     }
@@ -96,6 +98,7 @@ public class Product_DAO {
         ArrayList<String[]> result = Db_connection.getInstance().eseguiQuery("SELECT sku,asin, priority FROM " +
                 "(SELECT Skus.sku,Skus.asin, Prezzi.priority FROM fba2019.Skus left join fba2019.Prezzi ON Skus.sku=Prezzi.sku) s " +
                 "group by sku order by priority asc;");
+
 
         if (result.size() == 0) return null;
         else {

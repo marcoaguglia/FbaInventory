@@ -128,7 +128,7 @@ public class GetLowestPricedOffersForSKUSample {
             }
 
             for (int i = 0; i < response.getOffers().getOffer().size(); i++) {
-                if (response.getOffers().getOffer().get(i).getIsBuyBoxWinner() != null) {
+                if (response.getOffers().getOffer().get(i).getMyOffer() && response.getOffers().getOffer().get(i).getIsBuyBoxWinner() != null) {
                     if (response.getOffers().getOffer().get(i).getIsBuyBoxWinner()) {
                         p.setBuybox_winner(Is_winner.TRUE);
                     } else p.setBuybox_winner(Is_winner.FALSE);

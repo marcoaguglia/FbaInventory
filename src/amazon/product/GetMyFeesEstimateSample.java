@@ -16,14 +16,11 @@
 package amazon.product;
 
 
-import buisness.XmlParser;
 import com.amazonservices.mws.products.MarketplaceWebServiceProducts;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsClient;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsException;
 import com.amazonservices.mws.products.model.*;
 import model.Product;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import utility.MarketId;
 
 import java.math.BigDecimal;
@@ -50,11 +47,11 @@ public class GetMyFeesEstimateSample {
             GetMyFeesEstimateResponse response = client.getMyFeesEstimate(request);
             ResponseHeaderMetadata rhmd = response.getResponseHeaderMetadata();
             // We recommend logging every the request id and timestamp of every call.
-            System.out.println("Response:");
+          /*  System.out.println("Response:");
             System.out.println("RequestId: " + rhmd.getRequestId());
             System.out.println("Timestamp: " + rhmd.getTimestamp());
             String responseXml = response.toXML();
-            System.out.println(responseXml);
+            System.out.println(responseXml);*/
             return response;
         } catch (MarketplaceWebServiceProductsException ex) {
             // Exception properties are important for diagnostics.
@@ -98,6 +95,10 @@ public class GetMyFeesEstimateSample {
         feesEstimateRequests.setIsAmazonFulfilled(true);
         PriceToEstimateFees priceToEstimateFees = new PriceToEstimateFees();
         MoneyType moneyType = new MoneyType();
+        if (p.getCountry().equals("GB"))
+            moneyType.setCurrencyCode("GBP");
+        else
+            moneyType.setCurrencyCode("EUR");
         moneyType.setAmount(p.getPrice());
         priceToEstimateFees.setListingPrice(moneyType);
         moneyType.setAmount(BigDecimal.valueOf(0.00));
@@ -114,31 +115,19 @@ public class GetMyFeesEstimateSample {
 
         // Make the call.
         GetMyFeesEstimateResponse response = GetMyFeesEstimateSample.invokeGetMyFeesEstimate(client, request);
-
         try {
-
-            Document doc = XmlParser.xmlFromString(response.getGetMyFeesEstimateResult().getFeesEstimateResultList().getFeesEstimateResult().get(0).toXML());
-            doc.normalize();
-            Element getMyFeesEstimateResponse = doc.getDocumentElement();
-            Element getMyFeesEstimateResult = (Element) getMyFeesEstimateResponse.getElementsByTagName("GetMyFeesEstimateResult").item(0);
-            Element feesEstimateResultList = (Element) getMyFeesEstimateResult.getElementsByTagName("FeesEstimateResultList").item(0);
-            Element feesEstimateResult = (Element) feesEstimateResultList.getElementsByTagName("FeesEstimateResult").item(0);
-            Element feesEstimate = (Element) feesEstimateResult.getElementsByTagName("FeesEstimate").item(0);
-            Element totalEstimate = (Element) feesEstimate.getElementsByTagName("TotalFeesEstimate").item(0);
-            Element totalAmount = (Element) totalEstimate.getElementsByTagName("Amount").item(0);
-            String amount = totalAmount.getTextContent();
-            Element feeDetail = (Element) feesEstimate.getElementsByTagName("FeeDetailList").item(0);
-            String fba_amount2 = "";
-            for (int i = 0; i < feeDetail.getElementsByTagName("FeeDetail").getLength(); i++) {
-                if (feeDetail.getElementsByTagName("FeeType").item(0).getTextContent().equals("FBAFees")) {
-                    Element feeAmount = (Element) feeDetail.getElementsByTagName("FeeAmount").item(0);
-                    Element fba_Amount = (Element) feeAmount.getElementsByTagName("Amount").item(0);
-                    fba_amount2 = fba_Amount.getTextContent();
+            FeesEstimate estimate = response.getGetMyFeesEstimateResult().getFeesEstimateResultList().getFeesEstimateResult().get(0).getFeesEstimate();
+            BigDecimal total_amount = estimate.getTotalFeesEstimate().getAmount();
+            BigDecimal fba_amount = null;
+            List<FeeDetail> detail_list = estimate.getFeeDetailList().getFeeDetail();
+            for (int i = 0; i < detail_list.size(); i++) {
+                if (detail_list.get(i).getFeeType().equals("FBAFees")) {
+                    fba_amount = detail_list.get(i).getFinalFee().getAmount();
                 }
-
             }
-            p.setTotal_Fee(new BigDecimal(amount));
-            p.setFba_Fee(new BigDecimal(fba_amount2));
+
+            p.setTotal_Fee(total_amount);
+            p.setFba_Fee(fba_amount);
         } catch (Exception e) {
             e.printStackTrace();
         }
