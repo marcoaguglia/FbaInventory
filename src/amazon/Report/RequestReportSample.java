@@ -44,8 +44,8 @@ public class RequestReportSample {
         final String accessKeyId = "AKIAIS6BIWMZZ527WQTQ";
         final String secretAccessKey = "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";
 
-        final String appName = "BuyBoxMonitor";
-        final String appVersion = "1.0";
+        final String appName = "FBA_inventory";
+        final String appVersion = "1.1";
 
 
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();

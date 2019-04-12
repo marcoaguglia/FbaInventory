@@ -38,12 +38,12 @@ public class MarketplaceWebServiceProductsSampleConfig {
     /**
      * The client application name.
      */
-    private static final String appName = "BuyBoxMonitor";
+    private static final String appName = "FBA_inventory";
 
     /**
      * The client application version.
      */
-    private static final String appVersion = "1.0";
+    private static final String appVersion = "1.1";
 
 
     /**

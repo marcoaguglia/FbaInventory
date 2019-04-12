@@ -7,6 +7,7 @@ import model.Product;
 import utility.Is_winner;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /*******************************************
  * PriceManagerClass
@@ -40,6 +41,8 @@ public class PriceManager {
         int error_price = 0;
         int count_max_hour_quota = 0;
 
+
+        List<Product> products = Product.findSku_forPricing();
         //Scan every item of Fba_temp
         for (int i = 0; i < fba_Skus_Size; i++) {
 
@@ -54,7 +57,7 @@ public class PriceManager {
             /*******************************************************************/
 
             //Get i-item from FBA_temp
-            Product product = Product.findSku_forPricing(i);
+            Product product = products.get(i);
             //Search and get if available a clone product
             for (String country : marketplace) {
 
@@ -100,13 +103,15 @@ public class PriceManager {
                  ******************************************/
                 if (price.compareTo(buybox_price) == 0)
                     product.setBuybox_winner(Is_winner.UNKNOWN);
-                if (buybox_price.compareTo(lowest_price) < 0)
+
+                if (buybox_price.compareTo(lowest_price) < 0 && price.compareTo(buybox_price) == 0)
                     product.setBuybox_winner(Is_winner.TRUE);
-                else if (price.compareTo(buybox_price) > 0)
+
+                if (price.compareTo(buybox_price) > 0 || price.compareTo(buybox_price) < 0)
                     product.setBuybox_winner(Is_winner.FALSE);
 
                 //Se lowest_price non trova prezzi, la nostra è l'unica offerta
-                if (lowest_price.equals(BigDecimal.valueOf(0.00))) {
+                if (lowest_price.equals(BigDecimal.valueOf(0.00)) && price.compareTo(buybox_price) == 0) {
                     product.setBuybox_winner(Is_winner.TRUE);
                     product.setLowest_price(product.getPrice());
                 }

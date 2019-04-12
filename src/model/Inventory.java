@@ -20,5 +20,9 @@ public class Inventory {
     public static int findSizeSkus() {
         return Inventory_DAO.getInstance().findSizeSkus();
     }
+
+    public static String findFullfillmentChannelSku(String sku, String country) {
+        return Inventory_DAO.getInstance().findFullfillmentChannelSku(sku, country);
+    }
 }
 

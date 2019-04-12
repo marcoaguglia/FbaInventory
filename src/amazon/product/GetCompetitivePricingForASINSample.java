@@ -15,6 +15,7 @@
  */
 package amazon.product;
 
+
 import com.amazonservices.mws.products.MarketplaceWebServiceProducts;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsClient;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsException;
@@ -22,13 +23,11 @@ import com.amazonservices.mws.products.model.ASINListType;
 import com.amazonservices.mws.products.model.GetCompetitivePricingForASINRequest;
 import com.amazonservices.mws.products.model.GetCompetitivePricingForASINResponse;
 import com.amazonservices.mws.products.model.ResponseHeaderMetadata;
-import com.amazonservices.mws.products.samples.MarketplaceWebServiceProductsSampleConfig;
 import model.Product;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Sample call for GetCompetitivePricingForASIN.

@@ -94,15 +94,19 @@ public class GetMyFeesEstimateSample {
         feesEstimateRequests.setIdType("ASIN");
         feesEstimateRequests.setIsAmazonFulfilled(true);
         PriceToEstimateFees priceToEstimateFees = new PriceToEstimateFees();
-        MoneyType moneyType = new MoneyType();
-        if (p.getCountry().equals("GB"))
-            moneyType.setCurrencyCode("GBP");
-        else
-            moneyType.setCurrencyCode("EUR");
-        moneyType.setAmount(p.getPrice());
-        priceToEstimateFees.setListingPrice(moneyType);
-        moneyType.setAmount(BigDecimal.valueOf(0.00));
-        priceToEstimateFees.setShipping(moneyType);
+        MoneyType moneyTypeListing = new MoneyType();
+        MoneyType moneyTypeShipping = new MoneyType();
+        if (p.getCountry().equals("GB")) {
+            moneyTypeListing.setCurrencyCode("GBP");
+            moneyTypeShipping.setCurrencyCode("GBP");
+        } else {
+            moneyTypeListing.setCurrencyCode("EUR");
+            moneyTypeShipping.setCurrencyCode("EUR");
+        }
+        moneyTypeListing.setAmount(p.getPrice());
+        moneyTypeShipping.setAmount(new BigDecimal(0.00));
+        priceToEstimateFees.setListingPrice(moneyTypeListing);
+        priceToEstimateFees.setShipping(moneyTypeShipping);
         feesEstimateRequests.setPriceToEstimateFees(priceToEstimateFees);
         Points points = new Points();
         points.setPointsNumber(0);
@@ -123,13 +127,14 @@ public class GetMyFeesEstimateSample {
             for (int i = 0; i < detail_list.size(); i++) {
                 if (detail_list.get(i).getFeeType().equals("FBAFees")) {
                     fba_amount = detail_list.get(i).getFinalFee().getAmount();
+                    break;
                 }
             }
 
             p.setTotal_Fee(total_amount);
             p.setFba_Fee(fba_amount);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
+
         }
 
     }

@@ -11,6 +11,7 @@ import utility.Sleep;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,7 +44,7 @@ public class ReportManager {
         // Request new Report
         RequestReportSample.requestReport();
         // Wait that new Report has been generated.
-        Sleep.sleepSecond(23);
+        Sleep.sleepSecond(30);
 
         // Do while loop for execute GetReportList for all nextToken value
         do {
@@ -78,12 +79,14 @@ public class ReportManager {
 
                     //Delete file lista.txt
                     File file = new File("/home/gate/software_g14/fba_report_list.txt");
-                    //  File file = new File("C:\\Users\\Marco Aguglia\\Desktop\\lista.txt");
+                    //    File file = new File("C:\\Users\\Marco Aguglia\\Desktop\\lista.txt");
                     if (file.delete()) {
                         //Check file deleting and print that is ok.
                         System.out.println("caricamento FBA_temp terminato.\nFile cancellato dalla memoria.");
                     }
+                    break;
                 }
+
             }
             //close while loop for every nextToken
         } while (nextToken != null);
@@ -92,10 +95,36 @@ public class ReportManager {
 
     public static void setInventory() {
         int fba_Temp_Size = Inventory.findSizeInventoryTemp();
-
         //InsertProduct,PriceError counter
         int product_inserted = 0;
 
+
+        if (fba_Temp_Size != 0) {
+            ArrayList<String[]> result = Product.findProduct();
+            System.out.println("Controllo giacenze a zero...");
+            for (int j = 0; j < result.size(); j++) {
+
+                Product p = Product.findTempProduct_for_Sku((result.get(j))[0], (result.get(j))[3]);
+                if (p == null) {
+                    p = new Product();
+                    p.setSku((result.get(j))[0]);
+                    p.setCountry((result.get(j))[3]);
+                    p.setAsin((result.get(j))[2]);
+                    p.setGiacenza("0");
+                    p.setFullfillmentChannelSku((result.get(j))[1]);
+
+                    Product productStatus = Product.findInventoryProduct(p.getSku(), p.getCountry(), p.getGiacenza());
+                    if (productStatus == null || !(productStatus.getGiacenza().equals(p.getGiacenza()))) {
+                        //Insert in FBA_status
+                        if (p.getFullfillmentChannelSku() != null)
+                            Product.insertProductInventory(p);
+
+                    }
+                }
+
+
+            }
+        }
         //Scan every item of Fba_temp
         for (int i = 0; i < fba_Temp_Size; i++) {
             //Print Status of process
@@ -119,6 +148,7 @@ public class ReportManager {
                 //incremet counter
                 product_inserted++;
             }
+
 
             //Clean console
             /**********************************************************************************/

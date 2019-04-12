@@ -15,6 +15,7 @@
  */
 package amazon.product;
 
+
 import com.amazonservices.mws.products.MarketplaceWebServiceProducts;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsClient;
 import com.amazonservices.mws.products.MarketplaceWebServiceProductsException;
@@ -22,13 +23,11 @@ import com.amazonservices.mws.products.model.ASINListType;
 import com.amazonservices.mws.products.model.GetLowestOfferListingsForASINRequest;
 import com.amazonservices.mws.products.model.GetLowestOfferListingsForASINResponse;
 import com.amazonservices.mws.products.model.ResponseHeaderMetadata;
-import com.amazonservices.mws.products.samples.MarketplaceWebServiceProductsSampleConfig;
 import model.Product;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Sample call for GetLowestOfferListingsForASIN.
@@ -112,13 +111,13 @@ public class GetLowestOfferListingsForASINSample {
         request.setMarketplaceId(marketplaceId);
 
         List<String> asins = new ArrayList<>();
-        asins.add(p.getSku());
+        asins.add(p.getAsin());
         ASINListType asinList = new ASINListType();
         asinList.setASIN(asins);
         request.setASINList(asinList);
         String itemCondition = "New";
         request.setItemCondition(itemCondition);
-        Boolean excludeMe = Boolean.valueOf(true);
+        Boolean excludeMe = true;
         request.setExcludeMe(excludeMe);
 
         // Make the call.

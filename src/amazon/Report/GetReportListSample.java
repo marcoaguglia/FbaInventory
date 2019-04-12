@@ -27,6 +27,7 @@ import com.amazonservices.mws.client.MwsUtl;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -49,8 +50,8 @@ public class GetReportListSample {
         final String accessKeyId = "AKIAIS6BIWMZZ527WQTQ";
         final String secretAccessKey = "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";
 
-        final String appName = "BuyBoxMonitor";
-        final String appVersion = "1.0";
+        final String appName = "FBA_inventory";
+        final String appVersion = "1.1";
 
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
 
@@ -147,7 +148,7 @@ public class GetReportListSample {
         request.setAvailableToDate(lastUpdatedBefore);
         // sottraggo 1 ora data attuale
 
-        today.add(Calendar.MINUTE, -2);
+        today.add(Calendar.MINUTE, -70);
 
         simpleDateFormat.applyPattern("yyyy");
         int year_One_Hour_Before = Integer.parseInt(simpleDateFormat.format(today.getTime()));
@@ -166,7 +167,11 @@ public class GetReportListSample {
         lastUpdatedAfter.setDay(day_One_Hour_Before);
         lastUpdatedAfter.setTime(hour_One_Hour_Before, minute_One_Hour_Before, 0);
         request.setAvailableFromDate(lastUpdatedAfter);
-
+        List<String> lista_tipi = new ArrayList<>();
+        lista_tipi.add("_GET_AFN_INVENTORY_DATA_BY_COUNTRY_");
+        TypeList typeList = new TypeList();
+        typeList.setType(lista_tipi);
+        request.setReportTypeList(typeList);
 
         /****************************************************************************************************************/
 

@@ -5,6 +5,7 @@ import model.Product;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Product_DAO {
 
@@ -34,8 +35,28 @@ public class Product_DAO {
 
     }
 
+
+    public Product findTempProduct_for_Sku(String sku, String country) {
+
+        ArrayList<String[]> result = Db_connection.getInstance().eseguiQuery("SELECT * FROM FBA_temp WHERE sku='" + sku + "' and country='" + country + "';");
+        if (result.size() == 0) return null;
+        else {
+            Product product = new Product();
+            String[] d = result.get(0);
+            product.setSku(d[0]);
+            product.setFullfillmentChannelSku(d[1]);
+            product.setAsin(d[2]);
+            //      product.setCondition(d[3]);
+            product.setGiacenza(d[5]);
+            product.setCountry(d[4]);
+            return product;
+        }
+
+    }
+
     public void insertSku(String sku, String asin) {
         Db_connection.getInstance().eseguiAggiornamento("INSERT IGNORE INTO `Skus`(`sku`,`asin`) " + "VALUES ('" + sku + "','" + asin + "')");
+
     }
 
     public void insertProductInventory(Product p) {
@@ -94,7 +115,7 @@ public class Product_DAO {
         Db_connection.getInstance().eseguiAggiornamento("UPDATE FBA_inventory SET is_winner = '" + product.isBuybox_winner() + "' WHERE asin='" + product.getAsin() + "' and country='" + product.getCountry() + "';");
     }
 
-    public Product findSku_forPricing(int i) {
+    public List<Product> findSku_forPricing() {
         ArrayList<String[]> result = Db_connection.getInstance().eseguiQuery("SELECT sku,asin, priority FROM " +
                 "(SELECT Skus.sku,Skus.asin, Prezzi.priority FROM fba2019.Skus left join fba2019.Prezzi ON Skus.sku=Prezzi.sku) s " +
                 "group by sku order by priority asc;");
@@ -102,11 +123,16 @@ public class Product_DAO {
 
         if (result.size() == 0) return null;
         else {
-            String[] d = result.get(i);
-            Product product = new Product();
-            product.setSku(d[0]);
-            product.setAsin(d[1]);
-            return product;
+            List<Product> products = new ArrayList<>();
+            for (String[] d : result) {
+                Product p = new Product();
+                p.setSku(d[0]);
+                p.setAsin(d[1]);
+                products.add(p);
+            }
+
+
+            return products;
         }
 
     }
@@ -136,4 +162,17 @@ public class Product_DAO {
             return product;
         }
     }
+
+
+    public ArrayList<String[]> findInventoryProduct() {
+        ArrayList<String[]> result = Db_connection.getInstance().eseguiQuery("SELECT * FROM FBA_inventory group by sku, country ;");
+
+        if (result.size() == 0) return null;
+        else {
+            return result;
+        }
+    }
+
+
+
 }

@@ -121,7 +121,7 @@ public class GetLowestPricedOffersForSKUSample {
 
         // Make the call.
         GetLowestPricedOffersForSKUResult response = GetLowestPricedOffersForSKUSample.invokeGetLowestPricedOffersForSKU(client, request);
-
+        boolean flag = false;
         try {
             if (response.getSummary().getBuyBoxPrices().getBuyBoxPrice().get(0).getLandedPrice().getAmount() != null && p.getBuyBox_Price().equals(BigDecimal.valueOf(0.00))) {
                 p.setBuyBox_Price(response.getSummary().getBuyBoxPrices().getBuyBoxPrice().get(0).getLandedPrice().getAmount());
@@ -130,12 +130,14 @@ public class GetLowestPricedOffersForSKUSample {
             for (int i = 0; i < response.getOffers().getOffer().size(); i++) {
                 if (response.getOffers().getOffer().get(i).getMyOffer() && response.getOffers().getOffer().get(i).getIsBuyBoxWinner() != null) {
                     if (response.getOffers().getOffer().get(i).getIsBuyBoxWinner()) {
-                        p.setBuybox_winner(Is_winner.TRUE);
+                        flag = true;
                     } else p.setBuybox_winner(Is_winner.FALSE);
                 }
             }
         } catch (NullPointerException ignored) {
         }
+        if (flag)
+            p.setBuybox_winner(Is_winner.TRUE);
 
 
     }

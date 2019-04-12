@@ -4,6 +4,8 @@ import DAO.Product_DAO;
 import utility.Is_winner;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Product {
     private String sku;
@@ -12,9 +14,24 @@ public class Product {
     private BigDecimal price;
     private BigDecimal lowest_price;
     private BigDecimal total_Fee;
+    private String country;
+    private String asin;
+    private String giacenza;
+    private BigDecimal buyBox_Price;
+    private Is_winner buybox_winner;
     private BigDecimal fba_Fee;
     //  private boolean is_prime;
     private String img_url;
+    private int vendite;
+
+    public static List<Product> findSku_forPricing() {
+        return Product_DAO.getInstance().findSku_forPricing();
+    }
+
+    public static ArrayList<String[]> findProduct() {
+        return Product_DAO.getInstance().findInventoryProduct();
+    }
+
 
     public static void update_Is_Winner_Status(Product product) {
         Product_DAO.getInstance()._Is_Winner_Status(product);
@@ -28,11 +45,6 @@ public class Product {
         Product_DAO.getInstance().insertProductInventory(p);
     }
 
-    private String country;
-    private String asin;
-    private String giacenza;
-    private BigDecimal buyBox_Price;
-    private Is_winner buybox_winner;
 
     public static void insertPrice(Product p) {
         Product_DAO.getInstance().insertPrice(p);
@@ -146,8 +158,9 @@ public class Product {
         Product_DAO.getInstance().updateBuyBoxPrice(asin, buybox_price, marketplace);
     }
 
-    public static Product findSku_forPricing(int i) {
-        return Product_DAO.getInstance().findSku_forPricing(i);
+    public static Product findTempProduct_for_Sku(String sku, String country) {
+
+        return Product_DAO.getInstance().findTempProduct_for_Sku(sku, country);
     }
 
     public static Product findPrice(String sku, String country) {
@@ -156,6 +169,14 @@ public class Product {
 
     public static Product findSku(int i) {
         return Product_DAO.getInstance().findSku(i);
+    }
+
+    public int getVendite() {
+        return vendite;
+    }
+
+    public void setVendite(int vendite) {
+        this.vendite = vendite;
     }
 
     public BigDecimal getTotal_Fee() {
@@ -173,5 +194,6 @@ public class Product {
     public void setFba_Fee(BigDecimal fba_Fee) {
         this.fba_Fee = fba_Fee;
     }
+
 
 }

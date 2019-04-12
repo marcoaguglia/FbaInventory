@@ -56,8 +56,8 @@ public class GetReportSample {
         final String accessKeyId = "AKIAIS6BIWMZZ527WQTQ";
         final String secretAccessKey = "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";
 
-        final String appName = "BuyBoxMonitor";
-        final String appVersion = "1.0";
+        final String appName = "FBA_inventory";
+        final String appVersion = "1.1";
 
         MarketplaceWebServiceConfig config = new MarketplaceWebServiceConfig();
 
@@ -118,7 +118,7 @@ public class GetReportSample {
         OutputStream report;
         try {
             report = new FileOutputStream("/home/gate/software_g14/fba_report_list.txt");
-            // report = new FileOutputStream("C:\\Users\\Marco\\Desktop\\lista.txt");
+            //report = new FileOutputStream("C:\\Users\\Marco\\Desktop\\lista.txt");
             request.setReportOutputStream(report);
             invokeGetReport(service, request);
             report.close();
